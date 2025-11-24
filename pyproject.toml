@@ -8,3 +8,6 @@ dependencies = [
     "google-adk>=1.19.0",
     "pytest>=9.0.1",
 ]
+
+[tool.setuptools]
+py-modules = ["main", "agents", "tools", "helper"]
