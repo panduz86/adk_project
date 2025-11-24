@@ -1,5 +1,5 @@
 def retrieve_wines():
-	"""Return a hardcoded list of wines in the wine cellar.
+	"""Return the list of wines in the wine cellar.
 
 	Each wine is represented as a dictionary with the following keys:
 	- name: wine name
@@ -10,7 +10,7 @@ def retrieve_wines():
 	- grape_variety: primary grape or blend description
 	- best_meals: list of meal pairing suggestions
 
-	This is intentionally small and static for use as a tool by agents.
+	Returns a dict with "status" and "data" keys
 	"""
 	wines = [
 		{
@@ -105,64 +105,10 @@ def retrieve_wines():
 		}
 	]
 
-	return wines
+	result = {
+		"status" : "success",
+		"data" : wines
+	}
+	return result
 
-
-def retrieve_wines_subset(
-	colour=None,
-	country=None,
-	grape=None,
-	producer=None,
-	year_min=None,
-	year_max=None,
-	best_meal=None,
-	name_contains=None,
-	limit=None,
-):
-	"""Return a filtered subset of wines from the cellar.
-
-	All parameters are optional. Filtering rules:
-	- `colour`, `country`, `grape`, `producer`: case-insensitive exact match (grape and producer will check substring)
-	- `year_min`, `year_max`: integer bounds inclusive
-	- `best_meal`: case-insensitive substring match against any suggested meal
-	- `name_contains`: case-insensitive substring match against the wine name
-	- `limit`: maximum number of results to return (None = no limit)
-
-	Returns a list of wine dicts (same structure as `retrieve_wines`).
-	"""
-	wines = retrieve_wines()
-
-	def matches(w):
-		if colour and w.get("colour", "").lower() != colour.lower():
-			return False
-		if country and w.get("country_origin", "").lower() != country.lower():
-			return False
-		if grape and grape.lower() not in w.get("grape_variety", "").lower():
-			return False
-		if producer and producer.lower() not in w.get("producer", "").lower():
-			return False
-		if year_min and w.get("year") < year_min:
-			return False
-		if year_max and w.get("year") > year_max:
-			return False
-		if best_meal:
-			bm = best_meal.lower()
-			meals = [m.lower() for m in w.get("best_meals", [])]
-			if not any(bm in m for m in meals):
-				return False
-		if name_contains and name_contains.lower() not in w.get("name", "").lower():
-			return False
-		return True
-
-	results = [w for w in wines if matches(w)]
-
-	if limit is not None:
-		try:
-			n = int(limit)
-			if n >= 0:
-				results = results[:n]
-		except Exception:
-			pass
-
-	return results
 
