@@ -3,8 +3,8 @@ import logging
 from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from google.adk.tools import AgentTool, FunctionTool
-from agents.shared_library.helper import LLM_MODEL, retry_config
-from agents.shared_library.tools import retrieve_wines
+from .shared_library.helper import LLM_MODEL, retry_config
+from .shared_library.tools import retrieve_wines
 from .sub_agents.store_wine import StoreWineAgent
 
 # Root Coordinator: Orchestrates the workflow by calling the sub-agents as tools.

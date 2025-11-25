@@ -1,0 +1,32 @@
+{
+    "eval_set_id": "wine_cellar_integration_suite",
+    "eval_cases": [
+        {
+            "eval_id": "count_wines_in_the_cellar",
+            "conversation": [
+                {
+                    "user_content": {
+                        "parts": [
+                            {"text": "How many wines do we have in the cellar?"}
+                        ]
+                    },
+                    "final_response": {
+                        "parts": [
+                            {
+                                "text": "You have 10 wines in the cellar."
+                            }
+                        ]
+                    },
+                    "intermediate_data": {
+                        "tool_uses": [
+                            {
+                                "name": "retrieve_wines",
+                                "args": {}
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -108,10 +108,31 @@ Type `exit` or `quit` to stop the application.
 
 ### Running Tests
 
-Execute the test suite:
+#### Unit Tests
+
+Execute the unit test suite:
 ```bash
 make test
+# or
+pytest tests/
 ```
+
+#### Integration Tests
+
+Run integration tests using ADK's evaluation framework:
+```bash
+adk eval agents agents_tests/integration.evalset.json --config_file_path=agents_tests/test_config.json --print_detailed_results
+```
+
+This command:
+- Evaluates the agent system using test cases defined in `integration.evalset.json`
+- Uses configuration from `test_config.json`
+- Prints detailed results for each test scenario
+
+The integration tests validate end-to-end functionality including:
+- Wine recommendation queries
+- Cellar inventory management
+- New wine storage with automatic research
 
 ## Project Structure
 
