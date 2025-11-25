@@ -1,7 +1,7 @@
 from google.adk.agents import Agent, SequentialAgent
 from google.adk.models.google_llm import Gemini
 from google.adk.tools import google_search
-from helper import LLM_MODEL, retry_config
+from agents.shared_library.helper import LLM_MODEL, retry_config
 
 # Retrieve Information Agent: Its job is to use the google_search tool and present findings.
 RetrieveWineInformationAgent = Agent(

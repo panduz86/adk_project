@@ -117,18 +117,22 @@ make test
 
 ```
 adk_project/
-├── main.py                 # Application entry point
+├── main.py                          # Application entry point
 ├── agents/
-│   ├── agent.py           # Root coordinator agent
+│   ├── agent.py                    # Root coordinator agent
+│   ├── shared_library/
+│   │   ├── tools.py                # Wine retrieval functions
+│   │   └── helper.py               # Utility functions and configurations
 │   └── sub_agents/
-│       └── store_wine.py  # Sequential agent for storing wines
-├── tools.py               # Wine retrieval functions
-├── helper.py              # Utility functions and configurations
+│       └── store_wine.py           # Sequential agent for storing wines
+├── agents_tests/
+│   ├── integration.evalset.json    # Integration test cases
+│   └── test_config.json            # Test configuration
 ├── tests/
-│   └── test_tools.py      # Unit tests
-├── pyproject.toml         # Project dependencies
-├── Makefile              # Build and run commands
-└── README.md             # This file
+│   └── test_tools.py               # Unit tests
+├── pyproject.toml                   # Project dependencies
+├── Makefile                         # Build and run commands
+└── README.md                        # This file
 ```
 
 ## Technology Stack
@@ -141,7 +145,7 @@ adk_project/
 
 ## Configuration
 
-The application uses these key configurations (in `helper.py`):
+The application uses these key configurations (in `agents/shared_library/helper.py`):
 - **LLM Model**: Configurable Gemini model selection
 - **Retry Logic**: Automatic retry on API failures
 - **Session Management**: In-memory session service for stateful conversations
@@ -150,7 +154,7 @@ The application uses these key configurations (in `helper.py`):
 
 ### Adding New Wines
 
-Wines can be added through conversation or by modifying the `retrieve_wines()` function in `tools.py`.
+Wines can be added through conversation or by modifying the `retrieve_wines()` function in `agents/shared_library/tools.py`.
 
 ### Extending Functionality
 

@@ -8,7 +8,7 @@ from google.adk.plugins.logging_plugin import (
     LoggingPlugin,
 )
 
-from helper import APP_NAME, run_session
+from agents.shared_library.helper import APP_NAME, run_session
 
 
 

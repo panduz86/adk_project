@@ -5,9 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "google-adk>=1.19.0",
+    "google-adk[eval]>=1.19.0",
     "pytest>=9.0.1",
 ]
 
 [tool.setuptools]
-py-modules = ["main", "agents", "tools", "helper"]
+py-modules = ["main", "agents"]
