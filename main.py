@@ -1,9 +1,15 @@
 from dotenv import load_dotenv
+import asyncio
+
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from agents import root_agent
-from helper import APP_NAME, run_session
-import asyncio
+from agents.agent import root_agent
+from google.adk.plugins.logging_plugin import (
+    LoggingPlugin,
+)
+
+from agents.shared_library.helper import APP_NAME, run_session
+
 
 
 
@@ -12,7 +18,11 @@ async def main():
     
     session_service = InMemorySessionService()
     
-    runner = Runner(agent=root_agent, app_name=APP_NAME, session_service=session_service)
+    runner = Runner(agent=root_agent, 
+                    app_name=APP_NAME, 
+                    session_service=session_service,
+                    plugins=[LoggingPlugin()]
+                    )
 
     session_name = "stateful-agentic-session"
     
