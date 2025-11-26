@@ -5,10 +5,11 @@ VENV_DIR ?= .venv
 
 help:
 	@echo "Available targets:"
-	@echo "  make test                 - run the pytest test suite (uses .venv/python if present, else system python3)"
-	@echo "  make run                  - run the application (uses main.py)"
-	@echo "  make run-debug            - run the application with debug logs"
-	@echo "  make run-buy-agent-server - start the Buy Wine Agent on the port 8001"
+	@echo "  make test                   - run the pytest test suite (uses .venv/python if present, else system python3)"
+	@echo "  make run                    - run the application (uses main.py)"
+	@echo "  make run-debug              - run the application with debug logs"
+	@echo "  make run-buy-agent-server   - start the Buy Wine Agent on the port 8001"
+	@echo "  make run-review-mcp-server  - start the Review MCP Server on port 8002"
 
 test:
 	@if [ -d "$(VENV_DIR)" ]; then \
