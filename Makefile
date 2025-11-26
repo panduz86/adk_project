@@ -24,4 +24,7 @@ run-debug:
 	$(PYTHON) main.py --debug
 
 run-buy-agent-server:
-	$(PYTHON) agents/a2a_agents/run_buy_wine_a2a.py
+	$(PYTHON) wine_cellar/a2a_agents/run_buy_wine_a2a.py
+
+run-review-mcp-server:
+	$(PYTHON) wine_cellar/mcp_servers/review_server.py

@@ -14,7 +14,7 @@ load_dotenv()
 server_process = subprocess.Popen(
     [
         "uvicorn",
-        "agents.a2a_agents.buy_wine_server:app",  # Module:app format with full path
+        "wine_cellar.a2a_agents.buy_wine_server:app",  # Module:app format with full path
         "--host",
         "localhost",
         "--port",
