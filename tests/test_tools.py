@@ -5,7 +5,7 @@ import pytest
 # Ensure project root is on sys.path so tests can import top-level modules
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from agents.shared_library.tools import retrieve_wines
+from wine_cellar.shared_library.tools import retrieve_wines
 
 
 def test_retrieve_wines_count_and_structure():

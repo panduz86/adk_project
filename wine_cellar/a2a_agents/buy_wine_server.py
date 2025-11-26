@@ -2,7 +2,7 @@ from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from google.adk.tools import google_search
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
-from agents.shared_library.helper import LLM_MODEL, retry_config
+from wine_cellar.shared_library.helper import LLM_MODEL, retry_config
 
 BuyWineAgent = Agent(
     name="buy_wine_agent",

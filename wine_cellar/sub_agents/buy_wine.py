@@ -2,6 +2,9 @@ from google.adk.agents.remote_a2a_agent import (
     RemoteA2aAgent,
     AGENT_CARD_WELL_KNOWN_PATH,
 )
+import warnings
+
+warnings.filterwarnings("ignore")
 
 RemoteBuyWineAgent = RemoteA2aAgent(
     name="buy_wine_agent",

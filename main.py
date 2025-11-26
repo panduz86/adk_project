@@ -4,12 +4,12 @@ import argparse
 
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from agents.agent import root_agent
+from wine_cellar.agent import root_agent
 from google.adk.plugins.logging_plugin import (
     LoggingPlugin,
 )
 
-from agents.shared_library.helper import APP_NAME, run_session
+from wine_cellar.shared_library.helper import APP_NAME, run_session
 
 
 async def main():
