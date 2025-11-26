@@ -17,3 +17,6 @@ test:
 
 run:
 	$(PYTHON) main.py
+
+run-debug:
+	$(PYTHON) main.py --debug
