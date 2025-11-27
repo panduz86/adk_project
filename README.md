@@ -13,41 +13,73 @@ This application uses a coordinated multi-agent system to:
 
 ## Architecture
 
-The system uses a hierarchical agent architecture with local sub-agents, remote A2A agents, and MCP (Model Context Protocol) servers:
+> 📊 **[View Detailed Architecture Diagram](./architecture_diagram.md)** - Complete visual architecture with component interactions and data flows
 
-### Root Agent
-The **root_agent** acts as the main coordinator, orchestrating all workflows:
-- Handles wine recommendations by analyzing cellar inventory
-- Manages cellar inventory queries
-- Delegates wine storage tasks to the specialized StoreWineAgent
-- Coordinates with the remote BuyWineAgent for purchasing recommendations
-- Integrates with the MCP Review Server for managing wine reviews
-- Politely declines non-wine-related requests
+The system uses a hierarchical multi-agent architecture with three key integration patterns:
 
-### Sub-Agents
+### 🎯 Root Agent (Coordinator)
+The **root_agent** acts as the main orchestrator, managing all wine cellar operations:
+- Wine recommendations based on preferences, meal pairings, and origin
+- Cellar inventory queries and management
+- Delegation to specialized agents and tools
+- Review management coordination
+- Purchase assistance workflow
 
-#### StoreWineAgent (Sequential Agent)
-A two-stage sequential agent that stores new wines:
+**Tools Available**:
+- `retrieve_wines`: Direct function tool for cellar inventory
+- `mcp_review_wine_server`: MCP server integration (6 review operations)
 
-1. **RetrieveWineInformationAgent**: Uses Google Search to find 2-3 relevant pieces of information about the wine
-2. **WriterAgent**: Synthesizes the research into a structured JSON summary with all wine details
+**Sub-Agents**:
+- `StoreWineAgent`: Local sequential agent for adding wines
+- `RemoteBuyWineAgent`: Remote A2A agent for purchase assistance
 
-#### BuyWineAgent (Remote A2A Agent)
-An **Agent-to-Agent (A2A)** remote agent that helps users purchase wines:
-- Runs as a separate microservice on port 8001
-- Uses Google Search to find 2-3 best websites for purchasing specified wines
-- Communicates with the root agent via the A2A protocol
-- Returns URLs of recommended online retailers
+### 📦 Local Sub-Agents
 
-### MCP Servers
+#### StoreWineAgent (Sequential Pipeline)
+A two-stage pipeline that automatically researches and stores wines:
 
-#### Wine Review MCP Server
-A **Model Context Protocol (MCP)** server that manages wine reviews:
-- Runs as an independent service on port 8002
-- Provides standardized tools for review management
-- Maintains in-memory review database with persistent data
-- Exposes tools via HTTP at `http://localhost:8002/mcp`
-- Pre-populated with sample reviews for demonstration
+1. **Retrieve Wine Information Agent**
+   - Uses Google Search to gather wine details
+   - Finds 2-3 relevant information sources
+   - Output stored in session state as `research_findings`
+
+2. **Writer Agent**
+   - Synthesizes research into structured JSON
+   - Fields: name, producer, year, colour, country, grape variety, meal pairings
+   - Output stored as `final_summary`
+
+### 🌐 Remote A2A Agents
+
+#### Buy Wine Agent (Port 8001)
+An independent microservice using **Agent-to-Agent (A2A) protocol**:
+- Discovers purchase URLs for specified wines
+- Uses Google Search to find 2-3 best retail websites
+- Communicates via A2A protocol with agent card
+- Runs independently on dedicated port
+- Scalable and separately deployable
+
+**Endpoint**: `http://localhost:8001/.well-known/agent`
+
+### 🔌 MCP Servers
+
+#### Wine Review MCP Server (Port 8002)
+A **Model Context Protocol (MCP)** server providing standardized review tools:
+
+**Available Tools**:
+- `create_review`: Add reviews with ratings, notes, reviewer, and price
+- `get_review`: Retrieve specific review by ID
+- `list_reviews`: Filter by wine name or minimum rating
+- `delete_review`: Remove reviews
+- `get_average_rating`: Calculate average rating for wines
+- `search_reviews`: Search by keywords in tasting notes
+
+**Technical Details**:
+- Built with FastMCP framework
+- HTTP transport on port 8002
+- In-memory storage with sample data
+- JSON response format with status/data structure
+
+**Endpoint**: `http://localhost:8002/mcp`
 
 ## Features
 
@@ -229,43 +261,47 @@ This command:
 ```
 adk_project/
 ├── main.py                          # Application entry point
+├── architecture_diagram.md          # 📊 Visual architecture documentation
 ├── wine_cellar/
 │   ├── agent.py                    # Root coordinator agent
-│   ├── shared_library/
-│   │   ├── tools.py                # Wine retrieval functions
-│   │   ├── helper.py               # Utility functions and configurations
-│   │   ├── wine_data.py            # Shared wine and review data
-│   │   └── mcp_client.py           # MCP server connection setup
-│   ├── sub_agents/
-│   │   ├── store_wine.py           # Sequential agent for storing wines
+│   ├── shared_library/             # Shared utilities and data
+│   │   ├── tools.py                # Wine retrieval function tool
+│   │   ├── helper.py               # LLM config, retry logic, utilities
+│   │   ├── wine_data.py            # In-memory WINES and REVIEWS data
+│   │   └── mcp_client.py           # MCP server HTTP connection setup
+│   ├── sub_agents/                 # Local sub-agents
+│   │   ├── store_wine.py           # Sequential pipeline: Research → Writer
 │   │   └── buy_wine.py             # Remote A2A agent connector
-│   ├── a2a_agents/
-│   │   ├── buy_wine_server.py      # Buy Wine Agent server definition
+│   ├── a2a_agents/                 # Remote agent-to-agent services
+│   │   ├── buy_wine_server.py      # Buy Wine Agent definition (port 8001)
 │   │   └── run_buy_wine_a2a.py     # Server startup script
-│   └── mcp_servers/
-│       └── review_server.py        # Wine Review MCP server
-├── agents_tests/
-│   ├── integration.evalset.json    # Integration test cases
+│   └── mcp_servers/                # Model Context Protocol servers
+│       └── review_server.py        # Review management MCP server (port 8002)
+├── agents_tests/                    # Integration tests
+│   ├── integration.evalset.json    # ADK evaluation test cases
 │   └── test_config.json            # Test configuration
-├── tests/
+├── tests/                           # Unit tests
 │   ├── test_tools.py               # Wine tools unit tests
 │   └── test_review_server.py       # Review server unit tests
-├── pyproject.toml                   # Project dependencies
-├── Makefile                         # Build and run commands
+├── pyproject.toml                   # Project dependencies and metadata
+├── Makefile                         # Build, run, and test commands
 └── README.md                        # This file
 ```
 
 ## Technology Stack
 
-- **Google ADK (Agent Development Kit)**: Multi-agent orchestration framework
-- **Agent-to-Agent (A2A) Protocol**: Enables distributed agent communication via microservices
-- **Model Context Protocol (MCP)**: Standardized protocol for tool integration via HTTP
-- **FastMCP**: Lightweight framework for building MCP servers
-- **Gemini LLM**: Google's large language model for natural language understanding
-- **Google Search Tool**: Automated web research capability
-- **uvicorn**: ASGI server for hosting A2A agents and MCP servers
-- **pytest**: Testing framework
-- **asyncio**: Asynchronous session management
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| **Agent Framework** | Google ADK | Multi-agent orchestration and coordination |
+| **LLM** | Gemini (Google) | Natural language understanding and generation |
+| **A2A Protocol** | Agent-to-Agent | Distributed agent communication via microservices |
+| **MCP Protocol** | Model Context Protocol | Standardized tool integration via HTTP |
+| **MCP Framework** | FastMCP | Lightweight framework for building MCP servers |
+| **External Tools** | Google Search API | Automated web research and information retrieval |
+| **Web Server** | uvicorn (ASGI) | Hosting A2A agents and MCP servers |
+| **Testing** | pytest | Unit and integration testing |
+| **Async Runtime** | asyncio | Asynchronous session and connection management |
+| **Data Storage** | In-memory dictionaries | Fast access for development/demo purposes |
 
 ## Configuration
 
@@ -278,54 +314,92 @@ The MCP server connection is configured in `wine_cellar/shared_library/mcp_clien
 - **MCP URL**: `http://localhost:8002/mcp`
 - **Connection Type**: Streamable HTTP
 
-## Development
+## Development Guide
 
-### Model Context Protocol (MCP) Server
+> 💡 **Tip**: Review the [Architecture Diagram](./architecture_diagram.md) to understand component interactions before making changes
 
-The Wine Review MCP Server demonstrates MCP integration:
-- Runs as an independent HTTP service on port 8002
-- Built with FastMCP framework for simplicity
-- Exposes standardized tools via `/mcp` endpoint
-- Uses in-memory storage with pre-populated sample data
-- Provides six review management operations:
-  - `create_review`: Add new wine reviews
-  - `get_review`: Retrieve specific review by ID
-  - `list_reviews`: List all reviews with optional filtering
-  - `delete_review`: Remove a review
-  - `get_average_rating`: Calculate average rating for a wine
-  - `search_reviews`: Search reviews by keywords
+### Understanding the Architecture
 
-To develop or modify the Review MCP Server:
+The application follows three key architectural patterns:
+
+1. **Local Sequential Agents**: For multi-step operations (e.g., Store Wine pipeline)
+2. **Remote A2A Agents**: For distributed, independently scalable services (e.g., Buy Wine)
+3. **MCP Servers**: For standardized tool integration (e.g., Review Server)
+
+Refer to `architecture_diagram.md` for visual representation and data flow diagrams.
+
+### Developing MCP Servers
+
+The Wine Review MCP Server demonstrates Model Context Protocol integration:
+
+**Characteristics**:
+- Independent HTTP service (port 8002)
+- FastMCP framework for rapid development
+- Exposes tools via `/mcp` endpoint
+- Stateless with in-memory storage
+- JSON response format: `{"status": "success|error", "data": ...}`
+
+**Development Workflow**:
 1. Edit `wine_cellar/mcp_servers/review_server.py`
-2. Restart the server: `make run-review-mcp-server`
-3. The server will be available at: `http://localhost:8002/mcp`
+2. Add new tools using `@mcp.tool()` decorator
+3. Restart server: `make run-review-mcp-server`
+4. Test at: `http://localhost:8002/mcp`
 
-### Agent-to-Agent (A2A) Architecture
+**Best Practices**:
+- Keep tools focused and single-purpose
+- Return consistent JSON structure
+- Validate inputs and provide clear error messages
+- Use type hints for all parameters
 
-The Buy Wine Agent demonstrates A2A architecture:
-- Runs as an independent microservice on port 8001
-- Exposes agent capabilities via HTTP endpoints
-- Uses the A2A protocol for inter-agent communication
-- Can be deployed and scaled independently from the main application
+### Developing A2A Agents
 
-To develop or modify the Buy Wine Agent:
+The Buy Wine Agent demonstrates Agent-to-Agent architecture:
+
+**Characteristics**:
+- Independent microservice (port 8001)
+- Exposes agent card via `.well-known` endpoint
+- Communicates using A2A protocol
+- Independently deployable and scalable
+- Can be written in any language/framework
+
+**Development Workflow**:
 1. Edit `wine_cellar/a2a_agents/buy_wine_server.py`
-2. Restart the server: `make run-buy-agent-server`
-3. The agent card is available at: `http://localhost:8001/.well-known/agent-card.json`
+2. Modify agent definition (model, instructions, tools)
+3. Restart server: `make run-buy-agent-server`
+4. Verify agent card: `http://localhost:8001/.well-known/agent`
 
-### Adding New Wines
+**Best Practices**:
+- Keep agents focused on single domains
+- Document agent capabilities in description
+- Use clear, specific instructions
+- Return structured responses
 
-Wines can be added through conversation or by modifying the `WINES` list in `wine_cellar/shared_library/wine_data.py`.
+### Extending the System
 
-### Adding Sample Reviews
+**Adding New Wines**:
+- Via conversation: "Store a new wine: [wine name]"
+- Via code: Edit `WINES` list in `wine_cellar/shared_library/wine_data.py`
 
-Sample reviews can be added by modifying the `FAKE_REVIEWS` dictionary in `wine_cellar/shared_library/wine_data.py`.
+**Adding Sample Reviews**:
+- Edit `FAKE_REVIEWS` dictionary in `wine_cellar/shared_library/wine_data.py`
+- Restart MCP server to reload data
 
-### Extending Functionality
+**Adding New Agents**:
+1. Create agent file in `wine_cellar/sub_agents/` or `wine_cellar/a2a_agents/`
+2. Choose pattern: Sequential, A2A, or simple Agent
+3. Register in root agent (`wine_cellar/agent.py`):
+   - As tool: `tools=[AgentTool(YourAgent)]`
+   - As sub-agent: `sub_agents=[YourAgent]`
+4. Update root agent instructions with new workflow
+5. Add integration tests
 
-To add new capabilities:
-1. Create new agent in `wine_cellar/` or `wine_cellar/sub_agents/`
-2. Register as a tool or sub-agent in the root agent
-3. Update root agent instructions to include new workflow
-4. For external services, consider creating a new MCP server in `wine_cellar/mcp_servers/`
+**Adding New Tools**:
+- For simple functions: Add to `wine_cellar/shared_library/tools.py`
+- For complex services: Create new MCP server in `wine_cellar/mcp_servers/`
+- For external agents: Use A2A protocol with remote agent
+
+**Modifying the Orchestration**:
+- Edit root agent instructions in `wine_cellar/agent.py`
+- Update tool/sub-agent descriptions
+- Test changes with integration test suite
 
