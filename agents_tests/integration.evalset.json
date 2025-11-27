@@ -27,6 +27,60 @@
                     }
                 }
             ]
+        },
+        {
+            "eval_id": "recommend_wine",
+            "conversation": [
+                {
+                    "user_content": {
+                        "parts": [
+                            {"text": "Recommend a wine for grilled steak"}
+                        ]
+                    },
+                    "final_response": {
+                        "parts": [
+                            {
+                                "text": "For grilled steak, I recommend the Sassicaia, a red wine from Italy. It's a blend of Cabernet Sauvignon and Cabernet Franc and pairs well with grilled steak, game, and tomato-based pasta."
+                            }
+                        ]
+                    },
+                    "intermediate_data": {
+                        "tool_uses": [
+                            {
+                                "name": "retrieve_wines",
+                                "args": {}
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "eval_id": "average_wine_rating",
+            "conversation": [
+                {
+                    "user_content": {
+                        "parts": [
+                            {"text": "What's the average rating for Barolo?"}
+                        ]
+                    },
+                    "final_response": {
+                        "parts": [
+                            {
+                                "text": "The average rating for Barolo is 4.85 based on 2 reviews"
+                            }
+                        ]
+                    },
+                    "intermediate_data": {
+                        "tool_uses": [
+                            {
+                                "name": "get_average_rating",
+                                "args": {"wine_name": "Barolo"}
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }

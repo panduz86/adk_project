@@ -212,7 +212,10 @@ pytest tests/test_tools.py -v          # Wine tools tests with verbose output
 
 Run integration tests using ADK's evaluation framework:
 ```bash
-adk eval agents agents_tests/integration.evalset.json --config_file_path=agents_tests/test_config.json --print_detailed_results
+make run-review-mcp-server # This starts the MCP server on http://localhost:8002
+make run-buy-agent-server # This starts the remote A2A agent on http://localhost:8001
+
+adk eval wine_cellar agents_tests/integration.evalset.json --config_file_path=agents_tests/test_config.json --print_detailed_results
 ```
 
 This command:
@@ -220,12 +223,6 @@ This command:
 - Uses configuration from `test_config.json`
 - Prints detailed results for each test scenario
 
-The integration tests validate end-to-end functionality including:
-- Wine recommendation queries
-- Cellar inventory management
-- New wine storage with automatic research
-- Wine purchase website recommendations
-- Wine review creation and retrieval
 
 ## Project Structure
 
