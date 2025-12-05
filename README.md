@@ -1,6 +1,6 @@
 # Wine Cellar Management Agent
 
-An intelligent wine cellar management system built with Google's Agent Development Kit (ADK). This project demonstrates a multi-agent architecture with MCP (Model Context Protocol) integration for managing wine recommendations, cellar inventory, reviews, and wine purchases.
+This is a multi-agent wine cellar management system built with Google's Agent Development Kit (ADK) that demonstrates advanced agentic patterns including agent orchestration, MCP (Model Context Protocol) integration, and A2A (Agent-to-Agent) communication.
 
 ## Overview
 
